@@ -1,21 +1,23 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.0//EN" "html.dtd">
-<HTML>
-<HEAD><TITLE>
-Hercules Release Notes and Known Issues</TITLE>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.0//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML><HEAD><TITLE>
+Hercules: Release Notes
+</TITLE>
 <LINK REL=STYLESHEET TYPE="text/css" HREF="hercules.css">
+<link rel="shortcut icon" href="images/favicon.ico" />
+<link rel="icon" href="images/favicon.ico" />
 <style type="text/css">
   dt {font-family: Arial; font-weight: bold; font-style: rounded;}
 </style>
-</HEAD>
-<BODY BGCOLOR="#ffffcc" TEXT="#000000" LINK="#0000A0"
-      VLINK="#008040" ALINK="#000000">
+</HEAD><BODY BGCOLOR="#ffffcc" TEXT="#000000" LINK="#0000A0" VLINK="#008040" ALINK="#000000">
+
 <h1>Hercules Release Notes and Known Issues</h1>
+
 <hr noshade>
 
-
-<h2>Release notes for this version of Hercules 4.00 Hyperion</h2>
+<h2>Release notes for the SDL version of Hercules 4.00 Hyperion</h2>
 <p>
 <dl>
+
   <dt>Minimum supported Windows platform is now Windows Vista
   <dd>
   <p>
@@ -24,7 +26,8 @@ Hercules Release Notes and Known Issues</TITLE>
     to at least Windows Vista or greater, with Windows 7 being preferred.
   </p>
 
-  <dt>"MAXCPU" and "NUMCPU" statements
+
+  <dt>MAXCPU and NUMCPU statements
   <dd>
   <p>
     The combination of <a href="hercconf.html#NUMCPU">NUMCPU</a> and
@@ -38,6 +41,7 @@ Hercules Release Notes and Known Issues</TITLE>
     it defaults to 1.
   </p>
 
+
   <dt>New and improved CMPSC Compression Call 2012 instruction implementation is now the default
   <dd>
   <p>
@@ -47,6 +51,7 @@ Hercules Release Notes and Known Issues</TITLE>
     <a href="https://github.com/fish-git/hyperion/blob/master/README.CMPSC">README.CMPSC</a>
     document of the source code distribution for more information.
   </p>
+
 
   <dt>The sequence of certain system parameters may be important
   <dd>
@@ -83,6 +88,7 @@ Hercules Release Notes and Known Issues</TITLE>
     each new release of Hercules.
   </p>
 
+
   <dt>More architecturally compliant Channel Subsystem implementation
   <dd>
   <p>
@@ -112,6 +118,7 @@ Hercules Release Notes and Known Issues</TITLE>
     certain guest operating systems behave.
   </p>
 
+
   <dt>Configuration file statements and panel commands handled identically
   <dd>
   <p>
@@ -120,6 +127,7 @@ Hercules Release Notes and Known Issues</TITLE>
     entered as a panel command. Most panel commands are now also allowed as
     configuration file statements. See the documentation for full details.
   </p>
+
 
   <dt>Improved ECPSVM Support
   <dd>
@@ -131,6 +139,7 @@ Hercules Release Notes and Known Issues</TITLE>
     document for more detailed information.
   </p>
 
+
   <dt>Integrated Rexx support
   <dd>
   <p>
@@ -140,22 +149,65 @@ Hercules Release Notes and Known Issues</TITLE>
   </p>
   <p>
     If you have <a href="http://www.rexxla.org">Rexx</a> installed on your
-    host and Hercules is built with the rexx build option, then rexx scripts
-    can be run from directly within the Hercules environment (i.e. directly
-    from the Hercules HMC command line) via Hercules's "exec" command.
+    host and Hercules is built with the Rexx build option (the default for
+    the SDL version of Hyperion), then Rexx scripts
+    can be run directly from within the Hercules environment (i.e. directly
+    from the Hercules HMC command line via the Hercules <code>exec</code> command).
   </p>
   <p>
     Rexx scripts, when run within Hercules via the 'exec' command, can
     Address the HERCULES enviroment allowing you to issue Hercules commands
-    and retrieve the results via the builtin 'awscmd' rexx function call.
+    and retrieve the results via the builtin 'AWSCMD' Rexx function call.
   </p>
   <p>
-    For more information please refer to the
-    <a href="https://github.com/fish-git/hyperion/blob/master/README.REXX">README.REXX</a>
-    document and the
-    <a href="https://github.com/fish-git/hyperion/tree/master/scripts">sample scripts</a>
-    included in the 'scripts' subdirectory of the source code distribution.
+    For more information please refer to the new
+    <a href="rexx.html">Hercules Integrated Rexx Support</a> web page.
   </p>
+
+
+  <dt>SHCMDOPT defaults change
+  <dd>
+  <p>
+    The defaults for the <a href="hercconf.html#SHCMDOPT">SHCMDOPT</a> have changed.
+    The old defaults were <code>ENABLE DIAG8</code>.
+    The new defaults are <code>DISABLE NODIAG8</code>.
+    This was done for security reasons.
+  </p>
+
+
+  <dt>SHCMDOPT option also controls Rexx EXEC command
+  <dd>
+  <p>
+    The <code>ENABLE</code> and <code>DISABLE</code> option of the
+    <a href="hercconf.html#SHCMDOPT">SHCMDOPT</a> command now also controls
+    the Rexx <code>exec</code> command as well as the <code>sh</code> command.
+    That is to say, the Rexx <code>exec</code> command is now properly treated
+    as a host shell command. Thus, enabling or disabling the execution of host
+    shell commands via the <a href="hercconf.html#SHCMDOPT">SHCMDOPT</a> option
+    now also enables or disables execution of the <code>exec</code> command as well.
+    This was done for security reasons.
+  </p>
+
+
+  <dt>Change to DIAG8CMD ECHO option
+  <dd>
+  <p>
+    The behavior of the <a href="hercconf.html#DIAG8CMD">DIAG8CMD</a> command's
+    <code>ECHO</code> and <code>NOECHO</code> options has changed. Previosuly
+    the echo/noecho option had a a direct impact on the data that was placed into
+    the Diagnose 8 instruction's response buffer. This has been fixed so that now
+    it does not.
+  </p>
+  <p>
+    Previously, specifying the ECHO option caused audit trail messages HHC01950I
+    and HHC01603I to also appear in the instruction's response buffer, whereas now
+    only the command's actual output is placed into the response buffer. The ECHO
+    option now properly controls <i><u>only</u></i> the issuing of the HHC01950I
+    and HHC01603I audit messages to both the panel and hardcopy logfile,
+    but does not otherwise impact in any way what is placed into the instruction's
+    response buffer, as was the original intent for this option.
+  </p>
+
 
   <dt>External Packages
   <dd>
@@ -548,8 +600,9 @@ If you have a question about Hercules, see the
 <a href="hercfaq.html">Hercules Frequently-Asked Questions</a> page.
 
 <p><center><hr width=15% noshade>
-<a href="index.html"><img src="images/back.gif" border=0 alt="back"></a>
-</center>
-<p class="lastupd">Last updated $Date$ $Revision$</p>
+<a href="##" onclick="history.go(-1)"><img src="images/back.gif" border=0 alt="back"></a>
+<p class="lastupd"><script language="Javascript">
+document.write( "Last updated " + document.lastModified + "" );
+</script></p>
 </BODY>
 </HTML>
