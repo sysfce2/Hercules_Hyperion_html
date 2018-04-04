@@ -18,12 +18,52 @@ Hercules: Release Notes
 <p>
 <dl>
 
+
+  <dt>External Packages
+  <dd>
+  <p>
+    Select source code and associated functionality has been moved out of
+    the Hercules repository and into separately maintained External Package
+    repositories.  Refer to the
+    <a href="https://github.com/fish-git/hyperion/blob/master/README.EXTPKG">README.EXTPKG</a>
+    document for more information.
+  </p>
+
+
   <dt>Minimum supported Windows platform is now Windows Vista
   <dd>
   <p>
     The new minimum supported Windows platform is now Windows Vista.  All
     Hercules users still running older versions of Windows should upgrade
     to at least Windows Vista or greater, with Windows 7 being preferred.
+  </p>
+
+
+  <dt>Facility names have changed
+  <dd>
+  <p>
+    The name of the facilities as used by the <code>ARCHLVL enable|disable|query</code>
+    command have changed. Previous the facility name was just an abbreviated
+    name for the given facility (e.g. <code>ASN_LX_REUSE</code>). Such names have all been
+    changed to include their associated 3-digit bit number as part of their
+    name. For example, the previously named <code>ASN_LX_REUSE</code> facility has now
+    been renamed to <code>006_ASN_LX_REUSE</code> instead. This was done to ensure the
+    specifed facility was the one you actually meant since many facilities
+    are named similarly to other facilities.
+  </p>
+
+
+  <dt>"ASN and LX Reuse" now defaults to enabled
+  <dd>
+  <p>
+    The "ASN and LX Reuse" facility (STFL bit 6) is now enabled by default
+    for the z/Architecture mode, as it should have been all along.  It is
+    still disabled by default for the ESA/390 architecture mode however.
+    </p><p>
+    In earlier versions of Hercules it defaulted to disabled requiring those
+    running z/Architecture guest operating systems to have to manually add
+    an <code>ARCHLVL ENABLE 006_ASN_LX_REUSE</code> statement to their configuration file.
+    Such statements are now no longer necessary.
   </p>
 
 
@@ -70,25 +110,24 @@ Hercules: Release Notes
     may be important. Specifically, the
     <code><a href="hercconf.html#ARCHLVL">ARCHLVL</a></code>
     statement (previously called <code>ARCHMODE</code> and defines the
-    initial architectural mode of the system) should generally precede
+    initial architectural mode of the system) should generally <i>precede</i>
     (come before) any other <code>ARCHLVL</code> statement that enables
     or disables a given architectural feature.
   </p>
   <p>
-    For example: on certain IBM operating systems the z/Architecture "ASN
-    and LX Reuse Facility" feature must be enabled or the system will not IPL.
-    The facility is enabled in Hercules via the
-    <code><a href="hercconf.html#ARCHLVL_FACILITY">ARCHLVL ENABLE ASN_LX_REUSE</a></code>
-    configuration file statement, but since the facility is a z/Architecture-only
-    feature, your initial architecture must either be set to "z/Arch" beforehand
-    or else you need to specify the optional <code><em>[archmode]</em></code>
-    parameter on your <code>ARCHLVL ENABLE ASN_LX_REUSE</code> statement.
-  </p>
-  <p>
-    This means the <code>ARCHLVL z/Arch</code> statement must usually come
-    <i>before</i> your <code>ARCHLVL ENABLE ASN_LX_REUSE</code> statement
-    in your configuration file. Otherwise the ASN and LX Reuse Facility would
-    not be enabled.
+    For example: on certain IBM operating systems the z/Architecture "PFPO
+    Facility" must be enabled or the system will not IPL. While at the time
+    of this writing Hercules does not currently support the Perform Floating-Point
+    Operation (PFPO) Facility, the STFLE facility bit can nonetheless be
+    forcibly enabled anyway via the
+    <code><a href="hercconf.html#ARCHLVL_FACILITY">ARCHLVL ENABLE BIT44</a></code>
+    configuration file statement. Since the facility is a z/Architecture-only
+    feature however, your initial architecture must either be set to "z/Arch"
+    beforehand, or else you need to specify the optional
+    <code><em>[archlvl]</em></code> parameter on your ARCHLVL ENABLE BIT44 statement.
+    This usually means your "<code>ARCHLVL z/Arch</code>" statement must come
+    <i>before</i> your "<code>ARCHLVL ENABLE BIT44</code>" statement in your
+    configuration file. Otherwise the PFPO Facility would not get enabled.
   </p>
   <p>
     With the introduction of limited automatic LPAR-mode/BASIC-mode switching
@@ -99,10 +138,11 @@ Hercules: Release Notes
   </p>
   <p>
     The <code>ARCHLVL</code> and <code>LPARNUM</code> statements are currently
-    the only system parameters whose sequence may matter. The order of all other
-    system parameters should not currently matter. This may change in the future
-    however, so be sure to always carefully read through the RELEASE NOTES (this
-    document) with each new update to Hercules.
+    the only two system parameter configuration file statements whose sequence
+    matters. The order of all other configuration file system parameter statements
+    should not currently matter. This may change in the future however, so be
+    sure to always carefully read through the RELEASE NOTES (this document) with
+    each new update to Hercules.
   </p>
 
 
@@ -268,15 +308,112 @@ Hercules: Release Notes
   </p>
 
 
-  <dt>External Packages
+  <dt>ARCHLVL facility names have changed
   <dd>
   <p>
-    Select source code and associated functionality has been moved out of
-    the Hercules repository and into separately maintained External Package
-    repositories.  Refer to the
-    <a href="https://github.com/fish-git/hyperion/blob/master/README.EXTPKG">README.EXTPKG</a>
+    The <code><a href="hercconf.html#ARCHLVL_FACILITY">ARCHLVL</a></code> command was completely redesigned and rewritten in
+    order to more properly support and enforce the concept of prerequisite facilities
+    (i.e. a facility presuming/requiring some other facility). As part of this
+    rewrite the facility names used in the <code>ARCHLVL </code> command to enable,
+    disable or query a facility have been changed.
+  <p>
+    All defined facilities now begin with a 3-digit facility bit number in addition
+    to their abbreviated facility name. This was done to ensure the correct facility
+    was being enabled or disabled due to the similarity of some facility names.
+    For example, the previously named "ASN_LX_REUSE" facility is now named
+    "006_ASN_LX_REUSE".  Similarly, the previously named "PFPO" facility is now
+    named "044_PFPO". 
+  <p>
+    For a detailed list of the new abbreviated (short) facility
+    names, use the "<code>ARCHLVL QUERY [ ALL &#124; LONG ]</code>" command.
+  </p>
+
+
+  <dt>3088, CTCI-W32, CTCT and VMNET support dropped
+  <dd>
+  <p>
+    Support for 3088, CTCI-W32, CTCT and VMNET devices has been dropped.
+    3088 Channel-To-Channel Adapter support (which was the original intent
+    of CTCT) has instead been replaced with Peter Jansen's vastly improved
+    Enhanced Channel-To-Channel (<a href="hercconf.html#CTCE">CTCE</a>) device
+    support, which provides true Extended mode Channel-To-Channel Adapter
+    capabilities, allowing you to use
+    <a href="https://en.wikipedia.org/wiki/Global_Resource_Serialization">GRS</a>
+    to connect multiple Hercules instances together in a type of
+    <a href="https://en.wikipedia.org/wiki/IBM_Parallel_Sysplex">Sysplex</a>.
+  </p>
+
+
+  <dt>CAPPING support removed
+  <dd>
+  <p>
+    Previous versions of Hercules supported a "CAPPING" configuration statement
+    designed to purposely reduce performance to ensure that your MIPS rate never
+    exceeded the specified value. This functionality has now been removed.
+  </p>
+
+
+  <dt>New NETDEV configuration file statement
+  <dd>
+  <p>
+    A new <code>NETDEV</code> configuration file statement is now supported
+    to allow you to specify which host network adpter should be used for all
+    Hercules communications device emulation. Refer to the documentation for
+    the "<code><a href="hercconf.html#NETDEV">NETDEV</a></code>" statement for
+    more information.
+  </p>
+
+
+  <dt>New "t+-" Automatic Tracing command
+  <dd>
+  <p>
+    A new "<code>t+-</code>" (tee-plus-minus) Automatic Tracing command has been
+    created that may prove to be helpful in capturing capture guest issues that
+    occur very early in the guest's IPL sequence. Refer to the "<code>help t+-</code>"
+    help display for more information.
+  </p>
+
+
+  <dt>Default tape AUTOINIT option is now ON (enabled)
+  <dd>
+  <p>
+    The <code><a href="hercconf.html#AUTOINIT">AUTOINIT</a></code> option
+    controls whether device files for emulated tape volumes should be
+    automatically created or not if they do not exist. The previous default
+    was <code>OFF</code>. The new default is <code><u>ON</u></code>.
+  </p>
+
+
+  <dt>Diagnose X'F14' support removed
+  <dd>
+  <p>
+    Hercules's Diagnose X'F14' functionality was designed to allow
+    a Hercules guest to call into any host system DLL (Dynamic Link
+    Library). Since its use (dubius to begin with) was determined to be
+    a potential security risk (and the code didn't appear to be used
+    anywhere anyway), support for it was removed.
+  </p>
+
+
+  <dt>System/370/390 Vector Facility instructions are now enabled by default
+  <dd>
+  <p>
+    Hercules has always supported the System/370 and System/390 Vector Facility
+    set of instructions but support for them was never enabled by default. This
+    has now been corrected.
+  </p>
+
+
+  <dt>Hercules S/370 Instruction Extension Facility
+  <dd>
+  <p>
+    A new Hercules S/370 Instruction Extension Facility has been implemented to
+    replace the functionality previously provided by the "s37x.dll" dynamically
+    loadable module. Please refer to the
+    <a href="https://github.com/fish-git/hyperion/blob/master/README.S37X">README.S37X</a>
     document for more information.
   </p>
+
 </dl>
 
 <hr>
