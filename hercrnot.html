@@ -12,6 +12,42 @@ Hercules: Release Notes
 
 <h1>Hercules Release Notes and Known Issues</h1>
 
+<a name=4.9.1></a>
+<hr noshade>
+
+<h2>Release notes for <a href="https://github.com/SDL-Hercules-390/hyperion/releases/tag/Release_4.9.1">SDL Hyperion 4.9.1</a>
+</h2>
+
+<p>
+<dl>
+
+
+  <dt>Critical flaw in CCKD Garbage Collector / Dasd Hardener logic fixed
+  <dd>
+  <p>
+    Unknown to the Hercules team at the time, there existed a critcal flaw (bug)
+    in the CCKD "Garbage Collector" and "Dasd Hardener" logic that would, if allowed
+    to execute simultaneously with each other, cause one to unexpectedly interfere
+    with the other, resulting in Hercules potentially hanging or crashing.
+  <p>
+    Modifications to Hercules 4.9.1 have been made to ensure that this can no
+    longer occur, by ensuring that neither is able to execute at the same time
+    as the other. Instead, each now runs by itself (alone) until it reaches a stable
+    point in its logic at the end of its "pass", before then allowing the other to
+    execute until it too reaches a stable point in its own logic at the end of its
+    own corresponding "pass". Processing continues in this alternating fashion for
+    for as long as each are enabled.
+  <p>
+    With this fix (workaround) now in place, it is now
+    once again safe to have both the CCKD Garbage Collector and Dasd Hardener
+    to both be set to enabled if so desired. Note that the default enabled/disabled
+    setting for each have not changed however: the default for the Garbage Collector is
+    still <u>disabled</u> and the default for the Dasd Hardener is still <u>enabled</u>.
+
+</dl>
+
+<!-- --------------------------------------------------------------------------------- -->
+
 <a name=4.9></a>
 <hr noshade>
 
@@ -20,6 +56,26 @@ Hercules: Release Notes
 
 <p>
 <dl>
+
+
+  <dt><i><u><b>WARNING!</b></u></i> &nbsp;Critical flaw discovered in CCKD Garbage Collector / Dasd Hardener logic
+  <dd>
+  <p>
+    Unknown to the Hercules team at the time, there existed a critcal flaw (bug)
+    in the CCKD "Garbage Collector" and "Dasd Hardener" logic in Hercules 4.9
+    that would, if allowed to execute
+    simultaneously with each other, cause one to unexpectedly interfere with the other,
+    resulting in Hercules potentially hanging or crashing.
+  <p>
+    Because the default Dasd Hardener setting was changed to <i>enabled</i> beginning
+    with Hercules 4.9, this change unintentionally opened the possibility for
+    the bug to strike unsuspecting users in Hercules 4.9 if they happened to have a
+    '<code><b><a href="hercconf.html#CCKD">CCKD</a></b></code>'
+    statement in their configuration file that purposely enabled the Garbage Collector.
+  <p>
+    If this is the case for you, you should take steps to ensure that the Dasd Hardener
+    is <i><u>not</u></i> also enabled (or vice versa) to prevent the bug from affecting
+    you. The Hercules team greatly regrets any inconvenience this may cause.
 
 
   <dt>New default and recommended <code>'cu='</code> Control Unit value for 3390 dasds!
